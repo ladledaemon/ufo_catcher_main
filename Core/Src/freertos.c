@@ -60,6 +60,18 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = sizeof(defaultTaskBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for LCDTask */
+osThreadId_t LCDTaskHandle;
+uint32_t LCDTaskBuffer[ 128 ];
+osStaticThreadDef_t LCDTaskControlBlock;
+const osThreadAttr_t LCDTask_attributes = {
+  .name = "LCDTask",
+  .cb_mem = &LCDTaskControlBlock,
+  .cb_size = sizeof(LCDTaskControlBlock),
+  .stack_mem = &LCDTaskBuffer[0],
+  .stack_size = sizeof(LCDTaskBuffer),
+  .priority = (osPriority_t) osPriorityLow,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -67,6 +79,7 @@ const osThreadAttr_t defaultTask_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
+void StartLCDTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -109,6 +122,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
+  /* creation of LCDTask */
+  LCDTaskHandle = osThreadNew(StartLCDTask, NULL, &LCDTask_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -135,6 +151,24 @@ void StartDefaultTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
+}
+
+/* USER CODE BEGIN Header_StartLCDTask */
+/**
+* @brief Function implementing the LCDTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartLCDTask */
+void StartLCDTask(void *argument)
+{
+  /* USER CODE BEGIN StartLCDTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartLCDTask */
 }
 
 /* Private application code --------------------------------------------------*/
