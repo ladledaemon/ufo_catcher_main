@@ -1,0 +1,8 @@
+build
+mx.scratch
+.settings
+Debug
+Release
+.vscode
+.launch
+.mxproject
