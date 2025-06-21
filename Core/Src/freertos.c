@@ -25,7 +25,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "tim.h"
+#include "stdio.h"
+#include "ACM1602K-NLW-BBW.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -75,7 +77,11 @@ const osThreadAttr_t LCDTask_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+void acm1602k_set_rs(uint8_t value);
+void acm1602k_set_e(uint8_t value);
+void acm1602k_write_data_4bits(uint8_t value);
+void acm1602k_delay_ms(uint32_t ms);
+void acm1602k_delay_us(uint32_t us);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -163,16 +169,58 @@ void StartDefaultTask(void *argument)
 void StartLCDTask(void *argument)
 {
   /* USER CODE BEGIN StartLCDTask */
+  acm1602k_handle_t lcd;
+  acm1602k_interface_t lcd_interface;
+
+  lcd_interface.set_rs = acm1602k_set_rs;
+  lcd_interface.set_e = acm1602k_set_e;
+  lcd_interface.write_data_4bits = acm1602k_write_data_4bits;
+  lcd_interface.delay_ms = acm1602k_delay_ms;
+  lcd_interface.delay_us = acm1602k_delay_us;
+
+  lcd.interface = lcd_interface;
+
+  acm1602k_init(&lcd);
+
+  acm1602k_write_string(&lcd, "Status: OK");
+  acm1602k_set_cursor(&lcd, 1, 0);
+  acm1602k_write_string(&lcd, "Counter: ");
+  uint32_t counter = 0;
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    acm1602k_set_cursor(&lcd, 1, 9);
+    char buffer[10];
+    sprintf(buffer, "%lu", counter % 10);
+    acm1602k_write_string(&lcd, buffer);
+    counter++;
+    osDelay(100);
   }
   /* USER CODE END StartLCDTask */
 }
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
+void acm1602k_set_rs(uint8_t value) {
+  HAL_GPIO_WritePin(RS_GPIO_Port, RS_Pin, value ? GPIO_PIN_SET : GPIO_PIN_RESET);
+}
+void acm1602k_set_e(uint8_t value) {
+  HAL_GPIO_WritePin(E_GPIO_Port, E_Pin, value ? GPIO_PIN_SET : GPIO_PIN_RESET);
+}
+void acm1602k_write_data_4bits(uint8_t value) {
+  HAL_GPIO_WritePin(DB4_GPIO_Port, DB4_Pin, (value & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(DB5_GPIO_Port, DB5_Pin, (value & 0x02) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(DB6_GPIO_Port, DB6_Pin, (value & 0x04) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(DB7_GPIO_Port, DB7_Pin, (value & 0x08) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+}
+void acm1602k_delay_ms(uint32_t ms) {
+  osDelay(ms);
+}
+void acm1602k_delay_us(uint32_t us){
+  HAL_TIM_Base_Start(&htim6);
+  __HAL_TIM_SET_COUNTER(&htim6, 0);
+  while (__HAL_TIM_GET_COUNTER(&htim6) < us);
+  HAL_TIM_Base_Stop(&htim6);
+}
 /* USER CODE END Application */
 
