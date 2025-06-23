@@ -194,7 +194,7 @@ void StartLCDTask(void *argument)
     sprintf(buffer, "%lu", counter % 10);
     acm1602k_write_string(&lcd, buffer);
     counter++;
-    osDelay(100);
+    osDelay(250);
   }
   /* USER CODE END StartLCDTask */
 }
@@ -208,10 +208,10 @@ void acm1602k_set_e(uint8_t value) {
   HAL_GPIO_WritePin(E_GPIO_Port, E_Pin, value ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 void acm1602k_write_data_4bits(uint8_t value) {
-  HAL_GPIO_WritePin(DB4_GPIO_Port, DB4_Pin, (value & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(DB5_GPIO_Port, DB5_Pin, (value & 0x02) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(DB6_GPIO_Port, DB6_Pin, (value & 0x04) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(DB7_GPIO_Port, DB7_Pin, (value & 0x08) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(DB4_GPIO_Port, DB4_Pin, ((value >> 0)) & 1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(DB5_GPIO_Port, DB5_Pin, ((value >> 1)) & 1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(DB6_GPIO_Port, DB6_Pin, ((value >> 2)) & 1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(DB7_GPIO_Port, DB7_Pin, ((value >> 3)) & 1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 void acm1602k_delay_ms(uint32_t ms) {
   osDelay(ms);

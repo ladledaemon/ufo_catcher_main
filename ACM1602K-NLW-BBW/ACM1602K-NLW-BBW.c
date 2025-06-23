@@ -19,6 +19,14 @@ static void lcd_send_8bits(acm1602k_handle_t *lcd, uint8_t data){
     lcd->interface.delay_us(50);
 }
 
+static void acm1602k_write_command(acm1602k_handle_t *lcd, uint8_t command)
+{
+    // RSピンをLOWに設定して、コマンドモードにする
+    lcd->interface.set_rs(0);
+    // 8ビットのコマンドを送信する
+    lcd_send_8bits(lcd, command);
+}
+
 void acm1602k_init(acm1602k_handle_t *lcd){
     lcd->interface.set_rs(0);
     lcd->interface.set_e(0);
@@ -51,6 +59,8 @@ void acm1602k_init(acm1602k_handle_t *lcd){
 
     lcd_send_8bits(lcd, DISPLAY_ON);
     lcd->interface.delay_us(50);
+
+    acm1602k_write_command(lcd, 0x0F);
 }
 
 void acm1602k_write_char(acm1602k_handle_t *lcd, char data)
