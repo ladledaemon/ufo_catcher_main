@@ -180,7 +180,7 @@ void StartLCDTask(void *argument)
 
   lcd.interface = lcd_interface;
 
-  acm1602k_init(&lcd);
+  acm1602k_init(&lcd, ENTRY_MODE_RIGHT);
 
   acm1602k_write_string(&lcd, "Status: OK");
   acm1602k_set_cursor(&lcd, 1, 0);

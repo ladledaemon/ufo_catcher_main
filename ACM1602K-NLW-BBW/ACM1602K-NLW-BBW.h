@@ -10,7 +10,18 @@
 #define DISPLAY_ON 0x0C
 #define DISPLAY_OFF 0x08
 #define CLEAR_DISPLAY 0x01
-#define ENTRY_MODE_SET 0x06
+
+// 標準設定: カーソルは右へ移動、画面はシフトしない
+#define ENTRY_MODE_RIGHT      0x06
+
+// カーソルは左へ移動、画面はシフトしない
+#define ENTRY_MODE_LEFT       0x04
+
+// 画面全体が左へシフト（文字は右から現れるように見える）
+#define ENTRY_MODE_SHIFT_LEFT 0x07
+
+// 画面全体が右へシフト（文字は左から現れるように見える）
+#define ENTRY_MODE_SHIFT_RIGHT 0x05
 
 typedef void (*acm1602k_gpio_write_func_t)(uint8_t value);
 typedef void (*acm1602k_gpio_write_4bits_func_t)(uint8_t value);
@@ -29,11 +40,13 @@ typedef struct{
     acm1602k_interface_t interface;
     bool is_4bit_mode;
     bool is_2line_mode;
+    uint8_t entry_mode;
 }acm1602k_handle_t;
 
-void acm1602k_init(acm1602k_handle_t *lcd);
+void acm1602k_init(acm1602k_handle_t *lcd, uint8_t entry_mode);
 void acm1602k_write_char(acm1602k_handle_t *lcd, char data);
 void acm1602k_write_string(acm1602k_handle_t *lcd, const char *str);
 void acm1602k_set_cursor(acm1602k_handle_t *lcd, uint8_t row, uint8_t col);
+void acm1602k_change_entry_mode(acm1602k_handle_t *lcd, uint8_t new_entry_mode);
 
 #endif // ACM1602K_NLW_BBW_H
