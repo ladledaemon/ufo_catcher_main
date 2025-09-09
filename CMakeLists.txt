@@ -34,7 +34,7 @@ message("Build type: " ${CMAKE_BUILD_TYPE})
 # Enable CMake support for ASM and C languages
 enable_language(C ASM)
 
-add_subdirectory(UFO_Catcher_2025_CAN)
+add_subdirectory(UFO_Catcher_CAN)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
