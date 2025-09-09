@@ -21,7 +21,9 @@
 #include "can.h"
 
 /* USER CODE BEGIN 0 */
+#include <stdio.h>
 
+CAN_HandleTypeDef* _mainboard_phcan_global;
 /* USER CODE END 0 */
 
 CAN_HandleTypeDef hcan1;
@@ -226,5 +228,42 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
 }
 
 /* USER CODE BEGIN 1 */
+void MainBoard_CAN_Init(CAN_HandleTypeDef* _hcan)
+{
+    CAN_FilterTypeDef  sFilterConfig;
+    _mainboard_phcan_global = _hcan;
 
+    sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
+    sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+    sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
+    sFilterConfig.FilterActivation = ENABLE;
+    sFilterConfig.SlaveStartFilterBank = 14;
+
+    if(_hcan->Instance == CAN1){
+        sFilterConfig.FilterBank = 2;
+        if(HAL_CAN_ConfigFilter(_hcan, &sFilterConfig) != HAL_OK){
+            Error_Handler();
+        }
+    }
+
+    if(HAL_CAN_Start(_hcan) != HAL_OK){
+        printf("CAN Start Error\r\n");
+        Error_Handler();
+    }
+
+    if(HAL_CAN_ActivateNotification(_hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK){
+        printf("FIFO0 CAN Activation error\r\n");
+        Error_Handler();
+    }
+
+    if(HAL_CAN_ActivateNotification(_hcan, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK){
+        printf("FIFO1 CAN Activation error\r\n");
+        Error_Handler();
+    }
+
+    if(HAL_CAN_ActivateNotification(_hcan, CAN_IT_TX_MAILBOX_EMPTY) != HAL_OK){
+        printf("CAN Activation error2\r\n");
+        Error_Handler();
+    }
+}
 /* USER CODE END 1 */
