@@ -1,0 +1,3 @@
+[submodule "UFO_Catcher_CAN"]
+	path = UFO_Catcher_CAN
+	url = https://github.com/ladledaemon/UFO_Catcher_2025_CAN.git
