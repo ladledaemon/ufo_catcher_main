@@ -233,17 +233,56 @@ void MainBoard_CAN_Init(CAN_HandleTypeDef* _hcan)
     CAN_FilterTypeDef  sFilterConfig;
     _mainboard_phcan_global = _hcan;
 
+    uint32_t FilterId;
+    uint32_t FilterMaskId;
+
     sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
     sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
     sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
     sFilterConfig.FilterActivation = ENABLE;
     sFilterConfig.SlaveStartFilterBank = 14;
+    FilterMaskId = (MakeStdId(0xF, 0, 0) << 21) | 0x4;
 
     if(_hcan->Instance == CAN1){
-        sFilterConfig.FilterBank = 2;
-        if(HAL_CAN_ConfigFilter(_hcan, &sFilterConfig) != HAL_OK){
-            Error_Handler();
-        }
+      FilterId = MakeStdId(CMD_ENABLE_DISABLE, 0, 0) << 21;
+      sFilterConfig.FilterBank = 0;
+      sFilterConfig.FilterIdHigh = FilterId >> 16;
+      sFilterConfig.FilterIdLow = FilterId;
+      sFilterConfig.FilterMaskIdHigh = FilterMaskId >> 16;
+      sFilterConfig.FilterMaskIdLow = FilterMaskId;
+      if(HAL_CAN_ConfigFilter(_hcan, &sFilterConfig) != HAL_OK){
+        Error_Handler();
+      }
+
+      FilterId = MakeStdId(CMD_CALIB, 0, 0) << 21;
+      sFilterConfig.FilterBank = 1;
+      sFilterConfig.FilterIdHigh = FilterId >> 16;
+      sFilterConfig.FilterIdLow = FilterId;
+      sFilterConfig.FilterMaskIdHigh = FilterMaskId >> 16;
+      sFilterConfig.FilterMaskIdLow = FilterMaskId;
+      if(HAL_CAN_ConfigFilter(_hcan, &sFilterConfig) != HAL_OK){
+        Error_Handler();
+      }
+    }else if(_hcan->Instance == CAN2){
+      FilterId = MakeStdId(CMD_ENABLE_DISABLE, 0, 0) << 21;
+      sFilterConfig.FilterBank = 14;
+      sFilterConfig.FilterIdHigh = FilterId >> 16;
+      sFilterConfig.FilterIdLow = FilterId;
+      sFilterConfig.FilterMaskIdHigh = FilterMaskId >> 16;
+      sFilterConfig.FilterMaskIdLow = FilterMaskId;
+      if(HAL_CAN_ConfigFilter(_hcan, &sFilterConfig) != HAL_OK){
+        Error_Handler();
+      }
+
+      FilterId = MakeStdId(CMD_CALIB, 0, 0) << 21;
+      sFilterConfig.FilterBank = 15;
+      sFilterConfig.FilterIdHigh = FilterId >> 16;
+      sFilterConfig.FilterIdLow = FilterId;
+      sFilterConfig.FilterMaskIdHigh = FilterMaskId >> 16;
+      sFilterConfig.FilterMaskIdLow = FilterMaskId;
+      if(HAL_CAN_ConfigFilter(_hcan, &sFilterConfig) != HAL_OK){
+        Error_Handler();
+      }
     }
 
     if(HAL_CAN_Start(_hcan) != HAL_OK){
