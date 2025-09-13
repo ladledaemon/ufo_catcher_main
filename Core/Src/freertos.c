@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "wire_control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,6 +60,18 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = sizeof(defaultTaskBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for CalculateTarget */
+osThreadId_t CalculateTargetHandle;
+uint32_t CalculateTargetBuffer[ 128 ];
+osStaticThreadDef_t CalculateTargetControlBlock;
+const osThreadAttr_t CalculateTarget_attributes = {
+  .name = "CalculateTarget",
+  .cb_mem = &CalculateTargetControlBlock,
+  .cb_size = sizeof(CalculateTargetControlBlock),
+  .stack_mem = &CalculateTargetBuffer[0],
+  .stack_size = sizeof(CalculateTargetBuffer),
+  .priority = (osPriority_t) osPriorityLow,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -67,6 +79,7 @@ const osThreadAttr_t defaultTask_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
+void StartCalculateTarget(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -109,6 +122,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
+  /* creation of CalculateTarget */
+  CalculateTargetHandle = osThreadNew(StartCalculateTarget, NULL, &CalculateTarget_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -135,6 +151,32 @@ void StartDefaultTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
+}
+
+/* USER CODE BEGIN Header_StartCalculateTarget */
+/**
+* @brief Function implementing the CalculateTarget thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartCalculateTarget */
+void StartCalculateTarget(void *argument)
+{
+  /* USER CODE BEGIN StartCalculateTarget */
+  float initial_wire_length = 1.0f;
+  float winch1_position[3] = {0.0f, 0.0f, 0.0f};
+  float winch2_position[3] = {1.0f, 0.0f, 0.0f};
+  float winch3_position[3] = {0.0f, 1.0f, 0.0f};
+  float winch4_position[3] = {1.0f, 1.0f, 0.0f};
+  float target_winding_length[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+  float target_winding_velocity[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+  WireControl_Handle_t* wire_handle = WireControl_Create(winch1_position, winch2_position, winch3_position, winch4_position, initial_wire_length);
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartCalculateTarget */
 }
 
 /* Private application code --------------------------------------------------*/
