@@ -1,3 +1,6 @@
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_library(acm1602k_lib ACM1602K-NLW-BBW.c)
 
 target_include_directories(acm1602k_lib 
