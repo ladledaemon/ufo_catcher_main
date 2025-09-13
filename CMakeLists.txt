@@ -34,6 +34,8 @@ message("Build type: " ${CMAKE_BUILD_TYPE})
 # Enable CMake support for ASM and C languages
 enable_language(C CXX ASM)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fno-exceptions -fno-rtti -fno-threadsafe-statics -O2")
+
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
 
