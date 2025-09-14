@@ -8,15 +8,15 @@ class WireControl{
 public:
     Eigen::Vector4f target_winding_length_;
     Eigen::Vector4f target_winding_velocity_;
-    WireControl(const WireControl_Config_t* config){
+    WireControl(const WireControl_Config_t& config){
         for(uint8_t i = 0; i < 4; i++){
-            winch_positions_[i] = Eigen::Vector3f(config->winch_positions[i].x, config->winch_positions[i].y, config->winch_positions[i].z);
+            winch_positions_[i] = Eigen::Vector3f(config.winch_positions[i].x, config.winch_positions[i].y, config.winch_positions[i].z);
         }
-        this->initial_wire_length_ = config->initial_wire_length;
-        initial_corner_positions_[0] = Eigen::Vector3f(config->rectangle_size_x/2, -config->rectangle_size_y/2, 0);
-        initial_corner_positions_[1] = Eigen::Vector3f(config->rectangle_size_x/2, config->rectangle_size_y/2, 0);
-        initial_corner_positions_[2] = Eigen::Vector3f(-config->rectangle_size_x/2, config->rectangle_size_y/2, 0);
-        initial_corner_positions_[3] = Eigen::Vector3f(-config->rectangle_size_x/2, -config->rectangle_size_y/2, 0);
+        this->initial_wire_length_ = config.initial_wire_length;
+        initial_corner_positions_[0] = Eigen::Vector3f(config.rectangle_size_x/2, -config.rectangle_size_y/2, 0);
+        initial_corner_positions_[1] = Eigen::Vector3f(config.rectangle_size_x/2, config.rectangle_size_y/2, 0);
+        initial_corner_positions_[2] = Eigen::Vector3f(-config.rectangle_size_x/2, config.rectangle_size_y/2, 0);
+        initial_corner_positions_[3] = Eigen::Vector3f(-config.rectangle_size_x/2, -config.rectangle_size_y/2, 0);
     }
 
     void CalculateTargetWindingLength(float target_position[3]){
@@ -43,7 +43,7 @@ struct WireControl_Handle {
 extern "C" {
     WireControl_Handle_t* WireControl_Create(const WireControl_Config_t* config){
         WireControl_Handle_t* handle = new WireControl_Handle_t;
-        handle->instance = std::make_unique<WireControl>(config);
+        handle->instance = std::make_unique<WireControl>(*config);
         return handle;
     }
 
