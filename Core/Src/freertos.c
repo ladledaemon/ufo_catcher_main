@@ -163,14 +163,15 @@ void StartDefaultTask(void *argument)
 void StartCalculateTarget(void *argument)
 {
   /* USER CODE BEGIN StartCalculateTarget */
-  float initial_wire_length = 1.0f;
-  float winch1_position[3] = {0.0f, 0.0f, 0.0f};
-  float winch2_position[3] = {1.0f, 0.0f, 0.0f};
-  float winch3_position[3] = {0.0f, 1.0f, 0.0f};
-  float winch4_position[3] = {1.0f, 1.0f, 0.0f};
+  WireControl_Config_t config;
+  config.initial_wire_length = 1.0f;
+  config.winch_positions[0] = (Vec3f_C){0.0f, 0.0f, 0.0f};
+  config.winch_positions[1] = (Vec3f_C){1.0f, 0.0f, 0.0f};
+  config.winch_positions[2] = (Vec3f_C){0.0f, 1.0f, 0.0f};
+  config.winch_positions[3] = (Vec3f_C){1.0f, 1.0f, 0.0f};
   float target_winding_length[4] = {0.0f, 0.0f, 0.0f, 0.0f};
   float target_winding_velocity[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-  WireControl_Handle_t* wire_handle = WireControl_Create(winch1_position, winch2_position, winch3_position, winch4_position, initial_wire_length);
+  WireControl_Handle_t* wire_handle = WireControl_Create(&config);
   /* Infinite loop */
   for(;;)
   {
