@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "Eigen/Core"
+#include <memory>
 
 class WireControl{
 public:
@@ -36,27 +37,28 @@ private:
 };
 
 struct WireControl_Handle {
-    WireControl* instance;
+    std::unique_ptr<WireControl> instance;
 };
 
 extern "C" {
     WireControl_Handle_t* WireControl_Create(const WireControl_Config_t* config){
         WireControl_Handle_t* handle = new WireControl_Handle_t;
-        handle->instance = new WireControl(config);
+        handle->instance = std::make_unique<WireControl>(config);
         return handle;
     }
 
     void WireControl_Destroy(WireControl_Handle_t* handle){
-        if(handle){
-            delete handle->instance;
-            delete handle;
+        if(handle == nullptr){
+            return;
         }
+        delete handle;
     }
 
     void WireControl_CalculateTargetWindingLength(WireControl_Handle_t* handle, float target_position[3], float* target_winding_length){
         if(handle == nullptr || handle->instance == nullptr || target_winding_length == nullptr || target_position == nullptr){
             return;
         }
+        handle->instance->CalculateTargetWindingLength(target_position);
         for(uint8_t i = 0; i < 4; i++){
             target_winding_length[i] = handle->instance->target_winding_length_(i);
         }
