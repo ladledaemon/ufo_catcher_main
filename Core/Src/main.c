@@ -27,7 +27,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "can_utils.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -69,6 +69,38 @@ void MX_FREERTOS_Init(void);
 PUTCHAR_PROTOTYPE {
     HAL_UART_Transmit(&huart3, &ch, 1, 500);
     return ch;
+}
+
+void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan){
+  WhenTxMailboxCompleteCallbackCalled(hcan);
+}
+
+void HAL_CAN_TxMailbox0AbortCallback(CAN_HandleTypeDef *hcan){
+  WhenTxMailboxAbortCallbackCalled(hcan);
+}
+
+void HAL_CAN_TxMailbox1CompleteCallback(CAN_HandleTypeDef *hcan){
+  WhenTxMailboxCompleteCallbackCalled(hcan);
+}
+
+void HAL_CAN_TxMailbox1AbortCallback(CAN_HandleTypeDef *hcan){
+  WhenTxMailboxAbortCallbackCalled(hcan);
+}
+
+void HAL_CAN_TxMailbox2CompleteCallback(CAN_HandleTypeDef *hcan){
+  WhenTxMailboxCompleteCallbackCalled(hcan);
+}
+
+void HAL_CAN_TxMailbox2AbortCallback(CAN_HandleTypeDef *hcan){
+  WhenTxMailboxAbortCallbackCalled(hcan);
+}
+
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
+  WhenCANRxFifoMsgPending(hcan, 0);
+}
+
+void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan){
+  WhenCANRxFifoMsgPending(hcan, 1);
 }
 /* USER CODE END 0 */
 

@@ -165,11 +165,12 @@ void StartDefaultTask(void *argument)
 void StartMotorDriverTask(void *argument)
 {
   /* USER CODE BEGIN StartMotorDriverTask */
-  CANHandle_StdID* p_can_handle[2];
+  CANBus_Config_t config[2];
+  CANBus_Handle_t* can_handle[2];
+  can_handle[0] = CANBus_Create(&config[0]);
+  can_handle[1] = CANBus_Create(&config[1]);
   CANBuf_StdID rx_msg_can[2];
   MotorDriver_Handle_Typedef motor_driver[5];
-  p_can_handle[0] = MainBoard_CAN_Init(&hcan1);
-  p_can_handle[1] = MainBoard_CAN_Init(&hcan2);
   for(uint8_t i = 0; i < 5; i++){
     motor_driver[i].node_id = i + 2;
   }
@@ -177,7 +178,7 @@ void StartMotorDriverTask(void *argument)
   for(;;)
   {
     for(uint8_t i = 0; i < 2; i++){
-      if(GetRxMessage(p_can_handle[i], &rx_msg_can[i]) == HAL_OK){
+      if(CANBus_GetRxMessage(can_handle[i],&rx_msg_can[i]) == HAL_OK){
         uint32_t communication_type = rx_msg_can[i].StdId >> 7;
         uint8_t fb_id = (rx_msg_can[i].StdId >> 4) & 0x07;
         uint8_t fb_index = fb_id - 2;
