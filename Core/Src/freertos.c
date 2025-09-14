@@ -169,30 +169,26 @@ void StartDefaultTask(void *argument)
 void StartLCDTask(void *argument)
 {
   /* USER CODE BEGIN StartLCDTask */
-  acm1602k_handle_t lcd;
-  acm1602k_interface_t lcd_interface;
-
-  lcd_interface.set_rs = acm1602k_set_rs;
-  lcd_interface.set_e = acm1602k_set_e;
-  lcd_interface.write_data_4bits = acm1602k_write_data_4bits;
-  lcd_interface.delay_ms = acm1602k_delay_ms;
-  lcd_interface.delay_us = acm1602k_delay_us;
-
-  lcd.interface = lcd_interface;
-
-  acm1602k_init(&lcd, ENTRY_MODE_RIGHT);
-
-  acm1602k_write_string(&lcd, "Status: OK");
-  acm1602k_set_cursor(&lcd, 1, 0);
-  acm1602k_write_string(&lcd, "Counter: ");
+  ACM1602K_Config_t config;
+  config.entry_mode = ENTRY_MODE_RIGHT;
+  config.interface.set_rs = acm1602k_set_rs;
+  config.interface.set_e = acm1602k_set_e;
+  config.interface.write_data_4bits = acm1602k_write_data_4bits;
+  config.interface.delay_ms = acm1602k_delay_ms;
+  config.interface.delay_us = acm1602k_delay_us;
+  ACM1602K_Handle_t* lcd = ACM1602K_Create(&config);
+  ACM1602K_InitDisplay(lcd);
+  ACM1602K_PrintString(lcd, "Status: OK");
+  ACM1602K_SetCursor(lcd, 1, 0);
+  ACM1602K_PrintString(lcd, "Counter: ");
   uint32_t counter = 0;
   /* Infinite loop */
   for(;;)
   {
-    acm1602k_set_cursor(&lcd, 1, 9);
+    ACM1602K_SetCursor(lcd, 1, 9);
     char buffer[10];
     sprintf(buffer, "%lu", counter % 10);
-    acm1602k_write_string(&lcd, buffer);
+    ACM1602K_PrintString(lcd, buffer);
     counter++;
     osDelay(250);
   }

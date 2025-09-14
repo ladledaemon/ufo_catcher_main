@@ -1,7 +1,7 @@
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(acm1602k_lib ACM1602K-NLW-BBW.c)
+add_library(acm1602k_lib ACM1602K-NLW-BBW.cpp)
 
 target_include_directories(acm1602k_lib 
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}

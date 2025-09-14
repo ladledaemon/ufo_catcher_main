@@ -37,16 +37,26 @@ typedef struct{
 }acm1602k_interface_t;
 
 typedef struct{
-    acm1602k_interface_t interface;
-    bool is_4bit_mode;
-    bool is_2line_mode;
     uint8_t entry_mode;
-}acm1602k_handle_t;
+    acm1602k_interface_t interface;
+}ACM1602K_Config_t;
 
-void acm1602k_init(acm1602k_handle_t *lcd, uint8_t entry_mode);
-void acm1602k_write_char(acm1602k_handle_t *lcd, char data);
-void acm1602k_write_string(acm1602k_handle_t *lcd, const char *str);
-void acm1602k_set_cursor(acm1602k_handle_t *lcd, uint8_t row, uint8_t col);
-void acm1602k_change_entry_mode(acm1602k_handle_t *lcd, uint8_t new_entry_mode);
+struct ACM1602K_Handle;
+typedef struct ACM1602K_Handle ACM1602K_Handle_t;
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+ACM1602K_Handle_t* ACM1602K_Create(ACM1602K_Config_t* config);
+void ACM1602K_Destroy(ACM1602K_Handle_t* lcd);
+void ACM1602K_InitDisplay(ACM1602K_Handle_t* lcd);
+void ACM1602K_ChangeEntryMode(ACM1602K_Handle_t* lcd, uint8_t new_entry_mode);
+void ACM1602K_SetCursor(ACM1602K_Handle_t* lcd, uint8_t row, uint8_t col);
+void ACM1602K_PrintChar(ACM1602K_Handle_t* lcd, char data);
+void ACM1602K_PrintString(ACM1602K_Handle_t* lcd, const char* str);
+#ifdef __cplusplus
+}
+#endif
 
 #endif // ACM1602K_NLW_BBW_H
