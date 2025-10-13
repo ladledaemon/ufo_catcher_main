@@ -28,6 +28,7 @@
 #include "can.h"
 #include "can_utils.h"
 #include <string.h>
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -165,10 +166,14 @@ void StartDefaultTask(void *argument)
 void StartMotorDriverTask(void *argument)
 {
   /* USER CODE BEGIN StartMotorDriverTask */
-  CANBus_Config_t config[2];
+  CANBus_Config_t can_config[2];
+  can_config[0].device_type = MAINBOARD;
+  can_config[0].phcan = &hcan1;
+  can_config[1].device_type = MAINBOARD;
+  can_config[1].phcan = &hcan2;
   CANBus_Handle_t* can_handle[2];
-  can_handle[0] = CANBus_Create(&config[0]);
-  can_handle[1] = CANBus_Create(&config[1]);
+  can_handle[0] = CANBus_Create(&can_config[0]);
+  can_handle[1] = CANBus_Create(&can_config[1]);
   CANBuf_StdID rx_msg_can[2];
   MotorDriver_Handle_Typedef motor_driver[5];
   for(uint8_t i = 0; i < 5; i++){
@@ -193,6 +198,9 @@ void StartMotorDriverTask(void *argument)
           }
         }
       }
+      uint8_t test_data[8] = {0,1,2,3,4,5,6,7};
+      CANBus_SendMessage(can_handle[i], SET_TARGET, MAINBOARD, LEFT_BACK_WINCH, test_data, 8);
+      printf("Sent CAN Message\r\n");
     }
     osDelay(1);
   }
