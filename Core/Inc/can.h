@@ -45,7 +45,7 @@ void MX_CAN1_Init(void);
 void MX_CAN2_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-CANHandle_StdID* MainBoard_CAN_Init(CAN_HandleTypeDef* _hcan);
+
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
