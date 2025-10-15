@@ -187,6 +187,7 @@ void StartMotorDriverTask(void *argument)
         uint32_t communication_type = rx_msg_can[i].StdId >> 7;
         uint8_t fb_id = (rx_msg_can[i].StdId >> 4) & 0x07;
         uint8_t fb_index = fb_id - 2;
+        printf("communication_type: %lu\r\n", communication_type);
         if(fb_index < 5){
           switch (communication_type){
             case FEEDBACK:
@@ -199,7 +200,7 @@ void StartMotorDriverTask(void *argument)
         }
       }
       uint8_t test_data[8] = {0,1,2,3,4,5,6,7};
-      CANBus_SendMessage(can_handle[i], SET_TARGET, MAINBOARD, LEFT_BACK_WINCH, test_data, 8);
+      CANBus_SendMessage(can_handle[i], SET_TARGET, LEFT_BACK_WINCH, test_data, 8);
       printf("Sent CAN Message\r\n");
     }
     osDelay(1);
